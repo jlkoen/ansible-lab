@@ -1,5 +1,4 @@
 FROM ubuntu:trusty
-MAINTAINER Chris Lunsford <chris@thisendout.com>
 
 RUN apt-get update && apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
