@@ -1,43 +1,6 @@
 ---
 - hosts: webserver
   become: true
-  tasks:
-    - name: Install Web Components
-      apt: name={{item}} state=present update_cache=yes
-      with_items:
-        - apache2
-        - libapache2-mod-wsgi
-        - python-pip
-        - python-virtualenv
-        - python-mysqldb
-
-    - name: Ensure Apache2 started
-      service: name=apache2 state=started enabled=yes
-
-    - name: Ensure mod_wsgi enabled
-      apache2_module: state=present name=wsgi
-      notify: restart apache2
-
-    - name: Copy demo app source
-      copy: src=demo/app/ dest=/var/www/demo mode=0755
-      notify: restart apache2
-
-    - name: Copy apache virtual host config
-      copy: src=demo/demo.conf dest=/etc/apache2/sites-available mode=0755
-      notify: restart apache2
-
-    - name: Setup Python virtual enviornment
-      pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
-      notify: restart apache2
-
-    - name: De-activate default apache site
-      file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
-      notify: restart apache2
-
-    - name: Activate demo apache site
-      file: src=/etc/apache2/sites-available/demo.conf dest=/etc/apache2/sites-enabled/demo.conf state=link
-      notify: restart apache2
-
-  handlers:
-    - name: restart apache2
-      service: name=apache2 state=restarted
+  roles:
+    - apache2
+    - demo_app
